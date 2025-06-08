@@ -11,6 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type Mapping = map[string]interface{}
+type Listing = []interface{}
+
 func (s *Server) RegisterRoutes() http.Handler {
 	r := gin.Default()
 
@@ -43,10 +46,10 @@ func (s *Server) injectHandler(c *gin.Context) {
 		return
 	}
 	//log.Printf("Incoming AdmissionReview Request is: %+v\n", admissionReview.Request.Object)
-	object := admissionReview.Request.Object.(map[string]interface{})
-	containers := object["spec"].(map[string]interface{})["containers"]
-	containersList, _ := containers.([]interface{})
+	object := admissionReview.Request.Object.(Mapping)
+	containers := object["spec"].(Mapping)["containers"]
+	containersList, _ := containers.(Listing)
 	for _, container := range containersList {
-		fmt.Printf("Container %+v has image -> %+v\n", container.(map[string]interface{})["name"], container.(map[string]interface{})["image"])
+		fmt.Printf("Container %+v has image -> %+v\n", container.(Mapping)["name"], container.(Mapping)["image"])
 	}
 }
