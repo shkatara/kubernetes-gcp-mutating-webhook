@@ -75,7 +75,7 @@ func (s *Server) injectHandler(c *gin.Context) {
 				Message: "Request Successfully processed",
 			},
 
-			PatchType: nil,
+			PatchType: func(s string) *string { return &s }("JSONPatch"),
 			Patch:     []byte(`[{"op": "replace", "path": "/spec/containers/0/image", "value": "blocked-image"}]`),
 		}
 		c.JSON(http.StatusOK, types.AdmissionReview{
