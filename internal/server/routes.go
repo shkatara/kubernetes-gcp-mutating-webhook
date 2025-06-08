@@ -42,8 +42,11 @@ func (s *Server) injectHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "JSON parse failed"})
 		return
 	}
-
 	//log.Printf("Incoming AdmissionReview Request is: %+v\n", admissionReview.Request.Object)
 	object := admissionReview.Request.Object.(map[string]interface{})
-	fmt.Println(object["metadata"].(map[string]interface{})["name"])
+	containers := object["spec"].(map[string]interface{})["containers"]
+	containersList, _ := containers.([]interface{})
+	for _, container := range containersList {
+		fmt.Printf("Container %+v has image -> %+v\n", container.(map[string]interface{})["name"], container.(map[string]interface{})["image"])
+	}
 }
