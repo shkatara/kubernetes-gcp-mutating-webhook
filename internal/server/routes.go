@@ -1,7 +1,6 @@
 package server
 
 import (
-	"io"
 	"log"
 	"net/http"
 
@@ -35,10 +34,7 @@ func (s *Server) HelloWorldHandler(c *gin.Context) {
 }
 
 func (s *Server) injectHandler(c *gin.Context) {
-	body, _ := io.ReadAll(c.Request.Body)
-	println(string(body))
-	resp := make(map[string]string)
-	resp["message"] = "Hello World"
+
 	var admissionReview types.AdmissionReview
 	if err := c.BindJSON(&admissionReview); err != nil {
 		log.Printf("JSON Parse error: %v", err)
@@ -46,6 +42,5 @@ func (s *Server) injectHandler(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Incoming AdmissionReview: %+v\n", admissionReview)
-	c.JSON(http.StatusOK, resp)
+	log.Printf("Incoming AdmissionReview Request is: %+v\n", admissionReview.Request.Object)
 }
