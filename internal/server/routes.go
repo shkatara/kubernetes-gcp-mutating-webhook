@@ -76,7 +76,7 @@ func (s *Server) injectHandler(c *gin.Context) {
 			},
 
 			PatchType: nil,
-			Patch:     nil,
+			Patch:     []byte(`[{"op": "replace", "path": "/spec/containers/0/image", "value": "blocked-image"}]`),
 		}
 		c.JSON(http.StatusOK, types.AdmissionReview{
 			APIVersion: "admission.k8s.io/v1",
