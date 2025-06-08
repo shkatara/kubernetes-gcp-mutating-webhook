@@ -46,7 +46,12 @@ func main() {
 	// Run graceful shutdown in a separate goroutine
 	go gracefulShutdown(server, done)
 
+	// certFile := "./certs/tls.crt"
+	// keyFile := "./certs/tls.key"
+
+	//	err := server.ListenAndServeTLS(certFile, keyFile)
 	err := server.ListenAndServe()
+
 	if err != nil && err != http.ErrServerClosed {
 		panic(fmt.Sprintf("http server error: %s", err))
 	}

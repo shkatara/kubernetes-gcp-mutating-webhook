@@ -1,7 +1,11 @@
 package server
 
 import (
+	"io"
+	"log"
 	"net/http"
+
+	types "mutating-webhook/internal/types"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -18,6 +22,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}))
 
 	r.GET("/", s.HelloWorldHandler)
+	r.POST("/inject", s.injectHandler)
 
 	return r
 }
@@ -26,5 +31,21 @@ func (s *Server) HelloWorldHandler(c *gin.Context) {
 	resp := make(map[string]string)
 	resp["message"] = "Hello World"
 
+	c.JSON(http.StatusOK, resp)
+}
+
+func (s *Server) injectHandler(c *gin.Context) {
+	body, _ := io.ReadAll(c.Request.Body)
+	println(string(body))
+	resp := make(map[string]string)
+	resp["message"] = "Hello World"
+	var admissionReview types.AdmissionReview
+	if err := c.BindJSON(&admissionReview); err != nil {
+		log.Printf("JSON Parse error: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "JSON parse failed"})
+		return
+	}
+
+	log.Printf("Incoming AdmissionReview: %+v\n", admissionReview)
 	c.JSON(http.StatusOK, resp)
 }
