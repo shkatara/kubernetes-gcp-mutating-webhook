@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -42,5 +43,7 @@ func (s *Server) injectHandler(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Incoming AdmissionReview Request is: %+v\n", admissionReview.Request.Object)
+	//log.Printf("Incoming AdmissionReview Request is: %+v\n", admissionReview.Request.Object)
+	object := admissionReview.Request.Object.(map[string]interface{})
+	fmt.Println(object["metadata"].(map[string]interface{})["name"])
 }
