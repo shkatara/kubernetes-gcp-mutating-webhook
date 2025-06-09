@@ -1,5 +1,8 @@
 package types
 
+type Mapping = map[string]interface{}
+type Listing = []interface{}
+
 type AdmissionReview struct {
 	APIVersion string             `json:"apiVersion,omitempty"`
 	Kind       string             `json:"kind,omitempty"`
