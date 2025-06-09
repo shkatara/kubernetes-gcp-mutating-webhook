@@ -2,6 +2,7 @@ package gcpauth
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -61,8 +62,21 @@ func MakeSTSRequest() (string, error) {
 		return "", fmt.Errorf("failed to read response body: %w", err)
 	}
 
-	fmt.Printf("STS Federated Token : %s\n", respBody.String())
-	return resp.Status, nil
+	// Parse JSON response to extract access_token
+	var tokenResponse struct {
+		AccessToken string `json:"access_token"`
+		TokenType   string `json:"token_type"`
+		ExpiresIn   int    `json:"expires_in"`
+	}
+
+	err = json.Unmarshal(respBody.Bytes(), &tokenResponse)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse JSON response: %w", err)
+	}
+
+	accessToken := tokenResponse.AccessToken
+	fmt.Printf("STS Federated Token : %s\n", accessToken)
+	return accessToken, nil
 
 	// TODO : CALL IAM API to impersonate the service account
 
